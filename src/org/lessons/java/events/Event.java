@@ -7,12 +7,14 @@ public class Event {
 	private LocalDate date;
 	private int totalPlaces;
 	private int bookedPlaces;
+	private int remainingPlaces;
 
-	public Event(String title, LocalDate date, int totalPlaces) {
+	public Event(String title, LocalDate date, int totalPlaces) throws Exception {
 		setTitle(title);
 		setDate(date);
 		setTotalPlaces(totalPlaces);
 		this.bookedPlaces = 0;
+		this.remainingPlaces = totalPlaces - bookedPlaces;
 	}
 	
 	//	getter and setter
@@ -27,7 +29,8 @@ public class Event {
 	public LocalDate getDate() {
 		return date;
 	}
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDate date) throws Exception {
+		isBefore(date);
 		this.date = date;
 	}
 	
@@ -42,16 +45,19 @@ public class Event {
 		return bookedPlaces;
 	}
 	
-	// Book/Cancel
-	public void book(int bookedPlaces, LocalDate date) throws Exception {
-		isSoldOut(getTotalPlaces(), bookedPlaces);
-		isBefore(date);
-		this.bookedPlaces += bookedPlaces;
+	public int getRemainingPlaces() {
+		return remainingPlaces;
 	}
 	
-	public void cancel(int bookedPlaces, LocalDate date) throws Exception {
-		isBefore(date);
-		this.bookedPlaces -= bookedPlaces;
+	// Book/Cancel
+	public void book(int bookedPlaces) throws Exception {
+		isSoldOut(getTotalPlaces(), bookedPlaces);
+		this.bookedPlaces += bookedPlaces;
+		this.remainingPlaces -= bookedPlaces;
+	}
+	
+	public void cancel(int bookedPlaces) throws Exception {
+		this.totalPlaces -= bookedPlaces;
 	}
 	
 	// Exceptions
@@ -76,6 +82,7 @@ public class Event {
 				"Data: " + getDate() + "\n" + 
 				"Posti totali: " + getTotalPlaces() + "\n" + 
 				"Posti Prenotati: " + getBookedPlaces() + "\n" + 
+				"Posti Rimanenti: " + getRemainingPlaces() + "\n" +
 				"]";
 	}
 }
